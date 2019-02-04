@@ -25,22 +25,36 @@
 		<div class="reveal">
 			<div class="slides">
 				<section>
-					<h1>RXJS</h1>
+					<h1>RxJS</h1>
 					<h2>Tech Talk</h2>
 				</section>
 				<section>
 					<h1>What Is RxJS?</h1>
+				</section>
+				<section>
 					<blockquote>RxJS is a library for composing asynchronous and event-based programs by using observable sequences. It provides one core type, the <a href="https://rxjs-dev.firebaseapp.com/guide/observable">Observable</a>, satellite types (Observer, Schedulers, Subjects) and operators inspired by <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/New_in_JavaScript/1.6">Array#extras</a> (map, filter, reduce, every, etc) to allow handling asynchronous events as collections.</blockquote>
 				</section>
 				<section>
 					<h1>What does that even mean?</h1>
-					<p>Basically, Observables allow us to subscribe to events that happen over a period of time. They let us compose our user interfaces with small, independent components, that subscribe to a single Observable that emits events to everyone when new data is available.</p>
+				</section>
+				<section>
+					<p>Basically, Observables are event emitters that can be subscribed to by multiple Observers. They let us compose our user interfaces with small, independent components that can each subscribe to one Observable emitting data.</p>
+				</section>
+				<section>
+					<img src="" alt="My Boards from Dashboard">
+					<figcaption>
+						One Observable emits the current user's boards, which both the main section and favourites menu subscribe to. Starring a board in the My Boards section sends a POST request to the back-end and then emits an event that updates the information for all boards.
+					</figcaption>
 				</section>
 				<section>
 					<h1>What are Observables?</h1>
 				</section>
 				<section>
 					<h1>Combining Observables</h1>
+				</section>
+				<section>
+					<p>Sometimes we need to wait for multiple async calls to complete before we want to display information to a user.</p>
+					<p>For instance, we may need know: the current user, the current page being viewed, and what roles the current user has for that page.</p>
 				</section>
 				<section>
 					<h1>What Is RXJS?</h1>
