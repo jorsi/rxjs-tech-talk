@@ -7,7 +7,7 @@
 		<title>RXJS - Tech Talk</title>
 
 		<link rel="stylesheet" href="css/reveal.css">
-		<link rel="stylesheet" href="css/theme/black.css">
+		<link rel="stylesheet" href="css/theme/orsi.css">
 
 		<!-- Theme used for syntax highlighting of code -->
 		<link rel="stylesheet" href="lib/css/zenburn.css">
@@ -54,37 +54,125 @@
 				</section>
 				<section>
 					<h1>Why Observables and not Promises?</h1>
-					<img src="images/push-pull.PNG">
-					<p>Promises cannot be shared amongst several different components easily. Each async call will only return data to the caller. Sharing that data will require manually setting and updating a shareable reference variable.</p>
-					<p>Observables can be subscribed by many different callbacks, and each callback will receive the same data anytime it is emitted which they can manipulate with various operators.</p>
+					<section>
+						<img src="images/push-pull.PNG">
+					</section>
+					<section>
+						<p>Promises cannot be shared amongst several different components easily. Each async call will only return data to the caller. Sharing that data will require manually setting and updating a shareable reference variable.</p>
+					</section>
+					<section>
+						<p>Observables can be subscribed by many different callbacks, and each callback will receive the same data anytime it is emitted which they can manipulate with various operators.</p>
+					</section>
 				</section>
 				<section>
 					<h1>Different Types of Observables</h1>
 					<section>
 						<h3>Observables</h3>
+						<p>Basic type of Observable. Subscribers will receive data only when it is emitted.</p>
+						<code>
+							// boards.component.ts
+							ngOnInit() {
+								this.boardsSubscription = this._boardsService.getBoards()
+									.subscribe(boards => this.boards = boards);
+							}
+							// ... later on
+							ngOnDestroy() {
+								this.boardsSubscription.unsubscribe();
+							}
+						</code>
 					</section>
 					<section>
 						<h3>Subscriptions</h3>
+						<p>Returned from subscribing to an Observable. Used to unsubscribe from an Observable when it is no longer needed.</p>
+						<code>
+							// boards.component.ts
+							ngOnInit() {
+								this.boardsSubscription = this._boardsService.getBoards()
+									.subscribe(boards => this.boards = boards);
+							}
+							// ... later on
+							ngOnDestroy() {
+								this.boardsSubscription.unsubscribe();
+							}
+						</code>
 					</section>
 					<section>
 						<h3>Subjects</h3>
-						<span class="fragment fade-in">Behaviour Subjects</span>
-						<span class="fragment fade-in">Replay Subjects</span>
-						<span class="fragment fade-in">Async Subjects</span>
+						<p>A more complex form of Observables. Not only can it be subscribed to, but you can use them to emit data as well.</p>
+						<div class="fragment fade-in">Behaviour Subjects - Emits 'current value'</div>
+						<div class="fragment fade-in">Replay Subjects - Emits up to <em>nth</em> values</div>
+						<div class="fragment fade-in">Async Subjects - Emits only the last value when it completes</div>
+					</section>
+				</section>
+				<section>
+					<h2>Operators</h2>
+					<p>Operators can be 'piped' to mutate data going through an Observable before subscribing. For example, we can make sure to delay 500ms on every data event, only emit when there is a different value, or even change the data before it is sent to the subscribers.</p>
+					<section>
+						<h5>debounce</h5>
+						<p></p>
+						<code></code>
 					</section>
 					<section>
-						<h3>Schedulers ??</h3>
+						<h5>debounce</h5>
+						<p></p>
+						<code></code>
+					</section>
+					<section>
+						<h5>debounce</h5>
+						<p></p>
+						<code></code>
+					</section>
+					<section>
+						<h5>debounce</h5>
+						<p></p>
+						<code></code>
+					</section>
+					<section>
+						<h5>debounce</h5>
+						<p></p>
+						<code></code>
+					</section>
+					<section>
+						<h5>debounce</h5>
+						<p></p>
+						<code></code>
+					</section>
+					<section>
+						<h5>debounce</h5>
+						<p></p>
+						<code></code>
 					</section>
 				</section>
 				<section>
-					<h2>Pipes</h2>
-				</section>
-				<section>
-					<h1>Combining Observables</h1>
-				</section>
-				<section>
+					<h5>Combining Observables</h5>
 					<p>Sometimes we need to wait for multiple async calls to complete before we want to display information to a user.</p>
 					<p class="fragment fade-up">For instance, we may need know: the current user, the current page being viewed, and what roles the current user has for that page.</p>
+
+				</section>
+				<section>
+						<section>
+								<h5>debounce</h5>
+								<p></p>
+								<code></code>
+							</section>
+
+						<section>
+								<h5>debounce</h5>
+								<p></p>
+								<code></code>
+							</section>
+
+						<section>
+								<h5>debounce</h5>
+								<p></p>
+								<code></code>
+							</section>
+
+						<section>
+								<h5>debounce</h5>
+								<p></p>
+								<code></code>
+							</section>
 				</section>
 				<section>
 					<h1>Information</h1>
