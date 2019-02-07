@@ -52,4 +52,22 @@ section.has-light-background {
 		border: none;
 		box-shadow: none;
 	}
+	h1 {
+		font-size: $heading1Size;
+	}
+	h2 {
+		font-size: $heading2Size;
+	}
+	h3 {
+		font-size: $heading3Size;
+	}
+	h4 {
+		font-size: $heading4Size;
+	}
+	h5 {
+		font-size: $heading4Size;
+	}
+	h6 {
+		font-size: $heading4Size;
+	}
 }

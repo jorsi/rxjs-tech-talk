@@ -30,7 +30,7 @@
 				</section>
 				<section>
 					<h1>What Is RxJS?</h1>
-					<img src="images/rxjs.png">
+					<img src="images/rxjs.png" width="320">
 				</section>
 				<section>
 					<blockquote>RxJS is a library for composing asynchronous and event-based programs by using observable sequences. It provides one core type, the <a href="https://rxjs-dev.firebaseapp.com/guide/observable">Observable</a>, satellite types (Observer, Schedulers, Subjects) and operators inspired by <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/New_in_JavaScript/1.6">Array#extras</a> (map, filter, reduce, every, etc) to allow handling asynchronous events as collections.</blockquote>
@@ -39,7 +39,7 @@
 					<h1>...what does that even mean?</h1>
 				</section>
 				<section>
-					<p>Basically, Observables are event emitters that can be subscribed to by multiple Observers. They let us compose our user interfaces with small, independent components that can each subscribe to one Observable emitting data. This means we can sync complex data across our interfaces with little difficulty.</p>
+					<p>Basically, Observables are event emitters that can be subscribed to by more than one component. They let us compose our user interfaces with small, independent components that can each subscribe to one Observable emitting data. This means we can sync complex data across our interfaces with little difficulty.</p>
 				</section>
 				<section>
 					<img src="images/multi-component-interface-1.PNG" alt="Personal Boards on Trello">
@@ -57,8 +57,8 @@
 					<h1>Why Observables and not Promises?</h1>
 				</section>
 				<section>
-					<img src="images/push-pull.PNG">
 					<p>Promises cannot be shared amongst several different components easily. Each async call will only return data to the caller. Sharing that data will require manually setting and updating a shareable reference variable.</p>
+					<img src="images/push-pull.PNG">
 					<p>Observables can be subscribed by many different callbacks, and each callback will receive the same data anytime it is emitted which they can manipulate with various operators.</p>
 				</section>
 				<section>
@@ -70,15 +70,22 @@
 						<p>Basic type of Observable. Subscribers will receive data only when it is emitted.</p>
 						<pre>
 							<code data-trim contenteditable="true">
-								// boards.component.ts
-								ngOnInit() {
-									this.boardsSubscription = this._boardsService.getBoards()
-										.subscribe(boards => this.boards = boards);
-								}
-								// ... later on
-								ngOnDestroy() {
-									this.boardsSubscription.unsubscribe();
-								}
+								import { Observable } from 'rxjs';
+								
+								const foo = new Observable(subscriber => {
+									subscriber.next(42);
+								});
+								
+								foo.subscribe(x => {
+									console.log('subscriber 1: ', x);
+								});
+								foo.subscribe(y => {
+									console.log('subscriber 2: ', x);
+								});
+
+								// output
+								// subscriber 1: 42
+								// subscriber 2: 42 
 							</code>
 						</pre>
 					</section>
@@ -102,9 +109,105 @@
 					<section>
 						<h3>Subjects</h3>
 						<p>A more complex form of Observables. Not only can it be subscribed to, but you can use them to emit data as well.</p>
-						<p class="fragment fade-in highlight-red">Behaviour Subjects - Always emits current value</p>
-						<p class="fragment fade-in highlight-green">Replay Subjects - Emits up to <em>nth</em> values</p>
-						<p class="fragment fade-in highlight-blue">Async Subjects - Emits only the last value when it completes</p>
+						<ul>
+								<li class="fragment fade-in">Behaviour Subjects - Always emits current value</li>
+								<li class="fragment fade-in">Replay Subjects - Emits up to <em>nth</em> values</li>
+								<li class="fragment fade-in">Async Subjects - Emits only the last value when it completes</li>
+							</ul>
+					</section>
+					<section>
+						<h3>Behaviour Subject</h3>
+						<pre>
+							<code data-trim>
+								import { BehaviorSubject } from 'rxjs';
+								const subject = new BehaviorSubject(0); // 0 is the initial value
+									
+								subject.subscribe({
+									next: (v) => console.log(`observerA: ${v}`)
+								});
+									
+								subject.next(1);
+								subject.next(2);
+									
+								subject.subscribe({
+									next: (v) => console.log(`observerB: ${v}`)
+								});
+									
+								subject.next(3);
+									
+								// Logs
+								// observerA: 0
+								// observerA: 1
+								// observerA: 2
+								// observerB: 2
+								// observerA: 3
+								// observerB: 3
+							</code>
+						</pre>
+					</section>
+					<section>
+						<h3>Replay Subject</h3>
+						<pre>
+							<code data-trim>
+								import { ReplaySubject } from 'rxjs';
+								const subject = new ReplaySubject(3); // buffer 3 values for new subscribers
+									
+								subject.subscribe({
+									next: (v) => console.log(`observerA: ${v}`)
+								});
+									
+								subject.next(1);
+								subject.next(2);
+								subject.next(3);
+								subject.next(4);
+									
+								subject.subscribe({
+									next: (v) => console.log(`observerB: ${v}`)
+								});
+									
+								subject.next(5);
+									
+								// Logs:
+								// observerA: 1
+								// observerA: 2
+								// observerA: 3
+								// observerA: 4
+								// observerB: 2
+								// observerB: 3
+								// observerB: 4
+								// observerA: 5
+								// observerB: 5
+							</code>
+						</pre>
+					</section>
+					<section>
+						<h3>Async Subject</h3>
+						<pre>
+							<code data-trim>
+								import { AsyncSubject } from 'rxjs';
+								const subject = new AsyncSubject();
+									
+								subject.subscribe({
+									next: (v) => console.log(`observerA: ${v}`)
+								});
+									
+								subject.next(1);
+								subject.next(2);
+								subject.next(3);
+								subject.next(4);
+									
+								subject.subscribe({
+									next: (v) => console.log(`observerB: ${v}`)
+								});
+									
+								subject.next(5);
+								subject.complete();
+									
+								// Logs:
+								// observerA: 5
+								// observerB: 5
+							</code>
+						</pre>
 					</section>
 				</section>
 				<section>
@@ -113,30 +216,58 @@
 				<section>
 					<section>
 						<h2>create</h2>
-						<p></p>
+						<pre><code>create(subscribe: function)</code></pre>
+						<p>Create an observable with given subscription function.</p>
 						<pre>
 							<code data-trim contenteditable="true">
-
+								// RxJS v6+
+								import { Observable } from 'rxjs';
+								/*
+									Create an observable that emits 'Hello' and 'World' on  
+									subscription.
+								*/
+								const hello = Observable.create(function(observer) {
+									observer.next('Hello');
+									observer.next('World');
+								});
+								
+								//output: 'Hello'...'World'
+								const subscribe = hello.subscribe(val => console.log(val));
 							</code>
 						</pre>
 					</section>
 					<section>
 						<h2>from</h2>
+						<pre><code>from(ish: ObservableInput, mapFn: function, thisArg: any, scheduler: Scheduler): Observable</code></pre>
 						<img src="images/from.PNG">
-						<p></p>
+						<p>Turn an array, promise, or iterable into an observable.</p>
 						<pre>
 							<code data-trim contenteditable="true">
-
+								// RxJS v6+
+								import { from } from 'rxjs';
+								
+								//emit array as a sequence of values
+								const arraySource = from([1, 2, 3, 4, 5]);
+								//output: 1,2,3,4,5
+								const subscribe = arraySource.subscribe(val => console.log(val));
 							</code>
 						</pre>
 					</section>
 					<section>
 						<h2>of</h2>
+						<pre><code>of(...values, scheduler: Scheduler): Observable</code></pre>
 						<img src="images/of.PNG">
-						<p></p>
+						<p>Emit variable amount of values in a sequence and then emits a complete notification.</p>
 						<pre>
 							<code data-trim contenteditable="true">
-
+								// RxJS v6+
+								import { of } from 'rxjs';
+								//emits values of any type
+								const source = of({ name: 'Brian' }, [1, 2, 3], function hello() {
+									return 'Hello';
+								});
+								//output: {name: 'Brian}, [1,2,3], function hello() { return 'Hello' }
+								const subscribe = source.subscribe(val => console.log(val));
 							</code>
 						</pre>
 					</section>
@@ -148,65 +279,173 @@
 				<section>
 					<section>
 						<h5>debounceTime</h5>
+						<pre><code>debounceTime(dueTime: number, scheduler: Scheduler): Observable</code></pre>
 						<img src="images/debounceTime.PNG">
-						<p></p>
+						<p>Discard emitted values that take less than the specified time between output</p>
+						
+					</section>
+					<section>
 						<pre>
 							<code data-trim contenteditable="true">
-
+								// RxJS v6+
+								import { fromEvent, timer } from 'rxjs';
+								import { debounceTime, map } from 'rxjs/operators';
+								
+								const input = document.getElementById('example');
+								
+								//for every keyup, map to current input value
+								const example = fromEvent(input, 'keyup').pipe(map(i => i.currentTarget.value));
+								
+								//wait .5s between keyups to emit current value
+								//throw away all other values
+								const debouncedInput = example.pipe(debounceTime(500));
+								
+								//log values
+								const subscribe = debouncedInput.subscribe(val => {
+									console.log(`Debounced Input: ${val}`);
+								});
 							</code>
 						</pre>
 					</section>
 					<section>
 						<h5>distinctUntilChanged</h5>
-						<p></p>
+						<pre><code>distinctUntilChanged(compare: function): Observable</code></pre>
+						<p>Only emit when the current value is different than the last.</p>
 						<pre>
 							<code data-trim contenteditable="true">
-
+								// RxJS v6+
+								import { from } from 'rxjs';
+								import { distinctUntilChanged } from 'rxjs/operators';
+								
+								//only output distinct values, based on the last emitted value
+								const myArrayWithDuplicatesInARow = from([1, 1, 2, 2, 3, 1, 2, 3]);
+								
+								const distinctSub = myArrayWithDuplicatesInARow
+									.pipe(distinctUntilChanged())
+									//output: 1,2,3,1,2,3
+									.subscribe(val => console.log('DISTINCT SUB:', val));
+								
+								const nonDistinctSub = myArrayWithDuplicatesInARow
+									//output: 1,1,2,2,3,1,2,3
+									.subscribe(val => console.log('NON DISTINCT SUB:', val));
 							</code>
 						</pre>
 					</section>
 					<section>
 						<h5>filter</h5>
-						<p></p>
+						<pre><code>filter(select: Function, thisArg: any): Observable</code></pre>
+						<p>Emit values that pass the provided condition.</p>
 						<pre>
 							<code data-trim contenteditable="true">
-
+								// RxJS v6+
+								import { from } from 'rxjs';
+								import { filter } from 'rxjs/operators';
+								
+								//emit ({name: 'Joe', age: 31}, {name: 'Bob', age:25})
+								const source = from([{ name: 'Joe', age: 31 }, { name: 'Bob', age: 25 }]);
+								//filter out people with age under 30
+								const example = source.pipe(filter(person => person.age >= 30));
+								//output: "Over 30: Joe"
+								const subscribe = example.subscribe(val => console.log(`Over 30: ${val.name}`));
 							</code>
 						</pre>
 					</section>
 					<section>
 						<h5>map</h5>
-						<p></p>
+						<pre><code>map(project: Function, thisArg: any): Observable</code></pre>
+						<p>Apply projection with each value from source.</p>
 						<pre>
 							<code data-trim contenteditable="true">
-
+								// RxJS v6+
+								import { from } from 'rxjs';
+								import { map } from 'rxjs/operators';
+								
+								//emit (1,2,3,4,5)
+								const source = from([1, 2, 3, 4, 5]);
+								//add 10 to each value
+								const example = source.pipe(map(val => val + 10));
+								//output: 11,12,13,14,15
+								const subscribe = example.subscribe(val => console.log(val));
 							</code>
 						</pre>
 					</section>
 					<section>
-						<h5>pluck </h5>
-						<p></p>
+						<h5>pluck</h5>
+						<pre><code>pluck(properties: ...args): Observable</code></pre>
+						<p>Select properties to emit.</p>
 						<pre>
 							<code data-trim contenteditable="true">
-
+							// RxJS v6+
+							import { from } from 'rxjs';
+							import { pluck } from 'rxjs/operators';
+							
+							const source = from([{ name: 'Joe', age: 30 }, { name: 'Sarah', age: 35 }]);
+							//grab names
+							const example = source.pipe(pluck('name'));
+							//output: "Joe", "Sarah"
+							const subscribe = example.subscribe(val => console.log(val));
 							</code>
 						</pre>
 					</section>
 					<section>
 						<h5>tap</h5>
-						<p></p>
+						<pre><code>tap(nextOrObserver: function, error: function, complete: function): Observable</code></pre>
+						<p>Transparently perform actions or side-effects, such as logging.</p>
 						<pre>
 							<code data-trim contenteditable="true">
-
+									// RxJS v6+
+									import { of } from 'rxjs';
+									import { tap, map } from 'rxjs/operators';
+									
+									const source = of(1, 2, 3, 4, 5);
+									//transparently log values from source with 'do'
+									const example = source.pipe(
+									  tap(val => console.log(`BEFORE MAP: ${val}`)),
+									  map(val => val + 10),
+									  tap(val => console.log(`AFTER MAP: ${val}`))
+									);
+									
+									//'do' does not transform values
+									//output: 11...12...13...14...15
+									const subscribe = example.subscribe(val => console.log(val));
 							</code>
 						</pre>
 					</section>
 					<section>
 						<h5>finalize</h5>
-						<p></p>
+						<pre><code>finalize(callback: () => void)</code></pre>
+						<p>Call a function when observable completes or errors</p>
 						<pre>
 							<code data-trim contenteditable="true">
-
+								import { interval } from 'rxjs';
+								import { take, finalize } from 'rxjs/operators';
+								
+								//emit value in sequence every 1 second
+								const source = interval(1000);
+								//output: 0,1,2,3,4,5....
+								const example = source.pipe(
+									take(5), //take only the first 5 values
+									finalize(() => console.log('Sequence complete')) // Execute when the observable completes
+								)
+								const subscribe = example.subscribe(val => console.log(val));
+							</code>
+						</pre>
+					</section>
+					<section>
+						<h5>catchError</h5>
+						<pre><code>catchError(project : function): Observable</code></pre>
+						<p>Gracefully handle errors in an observable sequence.</p>
+						<pre>
+							<code data-trim contenteditable="true">
+								// RxJS v6+
+								import { throwError, of } from 'rxjs';
+								import { catchError } from 'rxjs/operators';
+								//emit error
+								const source = throwError('This is an error!');
+								//gracefully handle error, returning observable with error message
+								const example = source.pipe(catchError(val => of(`I caught: ${val}`)));
+								//output: 'I caught: This is an error'
+								const subscribe = example.subscribe(val => console.log(val));
 							</code>
 						</pre>
 					</section>
@@ -219,21 +458,65 @@
 				<section>
 					<section>
 						<h5>combineLatest</h5>
+						<pre><code>combineLatest(observables: ...Observable, project: function): Observable</code></pre>
 						<img src="images/combineLatest.PNG">
-						<p></p>
+						<p>When any observable emits a value, emit the latest value from each.</p>
+					</section>
+					<section>
 						<pre>
 							<code data-trim contenteditable="true">
-
+								// RxJS v6+
+								import { timer, combineLatest } from 'rxjs';
+								
+								//timerOne emits first value at 1s, then once every 4s
+								const timerOne = timer(1000, 4000);
+								//timerTwo emits first value at 2s, then once every 4s
+								const timerTwo = timer(2000, 4000);
+								//timerThree emits first value at 3s, then once every 4s
+								const timerThree = timer(3000, 4000);
+								
+								//when one timer emits, emit the latest values from each timer as an array
+								const combined = combineLatest(timerOne, timerTwo, timerThree);
+								
+								const subscribe = combined.subscribe(
+									([timerValOne, timerValTwo, timerValThree]) => {
+									/*
+										Example:
+									timerOne first tick: 'Timer One Latest: 1, Timer Two Latest:0, Timer Three Latest: 0
+									timerTwo first tick: 'Timer One Latest: 1, Timer Two Latest:1, Timer Three Latest: 0
+									timerThree first tick: 'Timer One Latest: 1, Timer Two Latest:1, Timer Three Latest: 1
+									*/
+									console.log(
+										`Timer One Latest: ${timerValOne},
+										Timer Two Latest: ${timerValTwo},
+										Timer Three Latest: ${timerValThree}`
+									);
+									}
+								);
 							</code>
 						</pre>
 					</section>
 					<section>
 						<h5>merge</h5>
+						<pre><code>merge(input: Observable): Observable</code></pre>
 						<img src="images/merge.PNG">
-						<p></p>
+						<p>Turn multiple observables into a single observable.</p>
+					</section>
+					<section>
 						<pre>
 							<code data-trim contenteditable="true">
-
+								// RxJS v6+
+								import { merge } from 'rxjs/operators';
+								import { interval } from 'rxjs';
+								
+								//emit every 2.5 seconds
+								const first = interval(2500);
+								//emit every 1 second
+								const second = interval(1000);
+								//used as instance method
+								const example = first.pipe(merge(second));
+								//output: 0,1,0,2....
+								const subscribe = example.subscribe(val => console.log(val));
 							</code>
 						</pre>
 					</section>
@@ -253,6 +536,11 @@
 							<a href="https://www.learnrxjs.io">Learn RxJS</a>
 							<p>Easy to follow tutorials</p>
 						</li>
+						<li>
+							<a href="https://angular.io/guide/rx-library">Angular - The RxJS Library</a>
+							<p>Guide to using RxJS specifically in Angular applications.</p>
+						</li>
+
 					</ul>
 				</section>
 				<section>
