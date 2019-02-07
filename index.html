@@ -30,6 +30,7 @@
 				</section>
 				<section>
 					<h1>What Is RxJS?</h1>
+					<img src="images/rxjs.png">
 				</section>
 				<section>
 					<blockquote>RxJS is a library for composing asynchronous and event-based programs by using observable sequences. It provides one core type, the <a href="https://rxjs-dev.firebaseapp.com/guide/observable">Observable</a>, satellite types (Observer, Schedulers, Subjects) and operators inspired by <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/New_in_JavaScript/1.6">Array#extras</a> (map, filter, reduce, every, etc) to allow handling asynchronous events as collections.</blockquote>
@@ -54,131 +55,195 @@
 				</section>
 				<section>
 					<h1>Why Observables and not Promises?</h1>
-					<section>
-						<img src="images/push-pull.PNG">
-					</section>
-					<section>
-						<p>Promises cannot be shared amongst several different components easily. Each async call will only return data to the caller. Sharing that data will require manually setting and updating a shareable reference variable.</p>
-					</section>
-					<section>
-						<p>Observables can be subscribed by many different callbacks, and each callback will receive the same data anytime it is emitted which they can manipulate with various operators.</p>
-					</section>
+				</section>
+				<section>
+					<img src="images/push-pull.PNG">
+					<p>Promises cannot be shared amongst several different components easily. Each async call will only return data to the caller. Sharing that data will require manually setting and updating a shareable reference variable.</p>
+					<p>Observables can be subscribed by many different callbacks, and each callback will receive the same data anytime it is emitted which they can manipulate with various operators.</p>
 				</section>
 				<section>
 					<h1>Different Types of Observables</h1>
+				</section>
+				<section>
 					<section>
 						<h3>Observables</h3>
 						<p>Basic type of Observable. Subscribers will receive data only when it is emitted.</p>
-						<code>
-							// boards.component.ts
-							ngOnInit() {
-								this.boardsSubscription = this._boardsService.getBoards()
-									.subscribe(boards => this.boards = boards);
-							}
-							// ... later on
-							ngOnDestroy() {
-								this.boardsSubscription.unsubscribe();
-							}
-						</code>
+						<pre>
+							<code data-trim contenteditable="true">
+								// boards.component.ts
+								ngOnInit() {
+									this.boardsSubscription = this._boardsService.getBoards()
+										.subscribe(boards => this.boards = boards);
+								}
+								// ... later on
+								ngOnDestroy() {
+									this.boardsSubscription.unsubscribe();
+								}
+							</code>
+						</pre>
 					</section>
 					<section>
 						<h3>Subscriptions</h3>
-						<p>Returned from subscribing to an Observable. Used to unsubscribe from an Observable when it is no longer needed.</p>
-						<code>
-							// boards.component.ts
-							ngOnInit() {
-								this.boardsSubscription = this._boardsService.getBoards()
-									.subscribe(boards => this.boards = boards);
-							}
-							// ... later on
-							ngOnDestroy() {
-								this.boardsSubscription.unsubscribe();
-							}
-						</code>
+						<p>Returned from subscribing to an Observable. Used to unsubscribe from an Observable when it is no longer needed. An observable will not be active until it has <em>at least one subscriber</em>.</p>
+						<pre>
+							<code data-trim contenteditable="true">
+								// boards.component.ts
+								ngOnInit() {
+									this.boardsSubscription = this._boardsService.getBoards()
+										.subscribe(boards => this.boards = boards);
+								}
+								// ... later on
+								ngOnDestroy() {
+									this.boardsSubscription.unsubscribe();
+								}
+							</code>
+						</pre>
 					</section>
 					<section>
 						<h3>Subjects</h3>
 						<p>A more complex form of Observables. Not only can it be subscribed to, but you can use them to emit data as well.</p>
-						<div class="fragment fade-in">Behaviour Subjects - Emits 'current value'</div>
-						<div class="fragment fade-in">Replay Subjects - Emits up to <em>nth</em> values</div>
-						<div class="fragment fade-in">Async Subjects - Emits only the last value when it completes</div>
+						<p class="fragment fade-in highlight-red">Behaviour Subjects - Always emits current value</p>
+						<p class="fragment fade-in highlight-green">Replay Subjects - Emits up to <em>nth</em> values</p>
+						<p class="fragment fade-in highlight-blue">Async Subjects - Emits only the last value when it completes</p>
+					</section>
+				</section>
+				<section>
+					<h1>Creating Observables</h1>
+				</section>
+				<section>
+					<section>
+						<h2>create</h2>
+						<p></p>
+						<pre>
+							<code data-trim contenteditable="true">
+
+							</code>
+						</pre>
+					</section>
+					<section>
+						<h2>from</h2>
+						<img src="images/from.PNG">
+						<p></p>
+						<pre>
+							<code data-trim contenteditable="true">
+
+							</code>
+						</pre>
+					</section>
+					<section>
+						<h2>of</h2>
+						<img src="images/of.PNG">
+						<p></p>
+						<pre>
+							<code data-trim contenteditable="true">
+
+							</code>
+						</pre>
 					</section>
 				</section>
 				<section>
 					<h2>Operators</h2>
 					<p>Operators can be 'piped' to mutate data going through an Observable before subscribing. For example, we can make sure to delay 500ms on every data event, only emit when there is a different value, or even change the data before it is sent to the subscribers.</p>
+				</section>
+				<section>
 					<section>
-						<h5>debounce</h5>
+						<h5>debounceTime</h5>
+						<img src="images/debounceTime.PNG">
 						<p></p>
-						<code></code>
+						<pre>
+							<code data-trim contenteditable="true">
+
+							</code>
+						</pre>
 					</section>
 					<section>
-						<h5>debounce</h5>
+						<h5>distinctUntilChanged</h5>
 						<p></p>
-						<code></code>
+						<pre>
+							<code data-trim contenteditable="true">
+
+							</code>
+						</pre>
 					</section>
 					<section>
-						<h5>debounce</h5>
+						<h5>filter</h5>
 						<p></p>
-						<code></code>
+						<pre>
+							<code data-trim contenteditable="true">
+
+							</code>
+						</pre>
 					</section>
 					<section>
-						<h5>debounce</h5>
+						<h5>map</h5>
 						<p></p>
-						<code></code>
+						<pre>
+							<code data-trim contenteditable="true">
+
+							</code>
+						</pre>
 					</section>
 					<section>
-						<h5>debounce</h5>
+						<h5>pluck </h5>
 						<p></p>
-						<code></code>
+						<pre>
+							<code data-trim contenteditable="true">
+
+							</code>
+						</pre>
 					</section>
 					<section>
-						<h5>debounce</h5>
+						<h5>tap</h5>
 						<p></p>
-						<code></code>
+						<pre>
+							<code data-trim contenteditable="true">
+
+							</code>
+						</pre>
 					</section>
 					<section>
-						<h5>debounce</h5>
+						<h5>finalize</h5>
 						<p></p>
-						<code></code>
+						<pre>
+							<code data-trim contenteditable="true">
+
+							</code>
+						</pre>
 					</section>
 				</section>
 				<section>
 					<h5>Combining Observables</h5>
 					<p>Sometimes we need to wait for multiple async calls to complete before we want to display information to a user.</p>
 					<p class="fragment fade-up">For instance, we may need know: the current user, the current page being viewed, and what roles the current user has for that page.</p>
-
 				</section>
 				<section>
-						<section>
-								<h5>debounce</h5>
-								<p></p>
-								<code></code>
-							</section>
+					<section>
+						<h5>combineLatest</h5>
+						<img src="images/combineLatest.PNG">
+						<p></p>
+						<pre>
+							<code data-trim contenteditable="true">
 
-						<section>
-								<h5>debounce</h5>
-								<p></p>
-								<code></code>
-							</section>
+							</code>
+						</pre>
+					</section>
+					<section>
+						<h5>merge</h5>
+						<img src="images/merge.PNG">
+						<p></p>
+						<pre>
+							<code data-trim contenteditable="true">
 
-						<section>
-								<h5>debounce</h5>
-								<p></p>
-								<code></code>
-							</section>
-
-						<section>
-								<h5>debounce</h5>
-								<p></p>
-								<code></code>
-							</section>
+							</code>
+						</pre>
+					</section>
 				</section>
 				<section>
 					<h1>Information</h1>
 					<ul>
 						<li>
 							<a href="https://rxjs-dev.firebaseapp.com">RxJS</a>
+							<p>Overview and reference api.</p>
 						</li>
 						<li>
 							<a href="https://rxmarbles.com/">RxJS Marbles</a>
@@ -186,61 +251,13 @@
 						</li>
 						<li>
 							<a href="https://www.learnrxjs.io">Learn RxJS</a>
-						</li>
-						<li>
-							<a href="https://jsonplaceholder.typicode.com/">JSON Placeholder</a>
+							<p>Easy to follow tutorials</p>
 						</li>
 					</ul>
 				</section>
 				<section>
 					<h3>Playground Time!</h3>
 					<a href="https://stackblitz.com/edit/rxjstechtalk">RxJS Tech Talk Playground</a>
-				</section>
-				<section>Section in section</section>
-				<section>Section in section</section>
-				<section>Section in section</section>
-				<section>
-					<h2>H2 Markdown test</h2>
-				</section>
-				<section data-markdown>
-					# Header 1 no textarea
-					testing
-					> asdf
-					> asdf
-
-					## a list
-					- One
-					- two
-					- 3
-				</section>
-				<section data-markdown>
-					<textarea data-template>
-						# Header 1 with textarea
-						testing
-						> asdf
-						> asdf
-
-						## a list
-						- One
-						- two
-						- 3
-					</textarea>
-				</section>
-				<section>
-					<h3>H3 FRAGMENTS</h3>
-					<p class="fragment grow">grow</p>
-					<p class="fragment shrink">shrink</p>
-					<p class="fragment fade-out">fade-out</p>
-					<p class="fragment fade-up">fade-up (also down, left and right!)</p>
-					<p class="fragment fade-in-then-out">fades in, then out when we move to the next step</p>
-					<p class="fragment fade-in-then-semi-out">fades in, then obfuscate when we move to the next step</p>
-				</section>
-				<section>
-					<h4>More Fragments</h4>
-					<p class="fragment highlight-current-blue">blue only once</p>
-					<p class="fragment highlight-red">highlight-red</p>
-					<p class="fragment highlight-green">highlight-green</p>
-					<p class="fragment highlight-blue">highlight-blue</p>
 				</section>
 			</div>
 		</div>

@@ -21,7 +21,7 @@ $backgroundColor: #222;
 $mainColor: #fff;
 $headingColor: #fff;
 
-$mainFontSize: 16px;
+$mainFontSize: 32px;
 $mainFont: 'Source Sans Pro', Helvetica, sans-serif;
 $headingFont: 'Source Sans Pro', Helvetica, sans-serif;
 $headingTextShadow: none;
@@ -37,13 +37,19 @@ $heading2Size: 1.6em;
 $heading3Size: 1.3em;
 $heading4Size: 1.0em;
 
+// Theme template ------------------------------
+@import "../template/theme";
+// ---------------------------------------------
+
 section.has-light-background {
 	&, h1, h2, h3, h4, h5, h6 {
 		color: #222;
 	}
 }
-
-
-// Theme template ------------------------------
-@import "../template/theme";
-// ---------------------------------------------
+.reveal {
+	section img {
+		background: none;
+		border: none;
+		box-shadow: none;
+	}
+}
