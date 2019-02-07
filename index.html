@@ -30,10 +30,87 @@
 				</section>
 				<section>
 					<h1>What Is RxJS?</h1>
-					<section>Section in section</section>
-					<section>Section in section</section>
-					<section>Section in section</section>
 				</section>
+				<section>
+					<blockquote>RxJS is a library for composing asynchronous and event-based programs by using observable sequences. It provides one core type, the <a href="https://rxjs-dev.firebaseapp.com/guide/observable">Observable</a>, satellite types (Observer, Schedulers, Subjects) and operators inspired by <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/New_in_JavaScript/1.6">Array#extras</a> (map, filter, reduce, every, etc) to allow handling asynchronous events as collections.</blockquote>
+				</section>
+				<section>
+					<h1>...what does that even mean?</h1>
+				</section>
+				<section>
+					<p>Basically, Observables are event emitters that can be subscribed to by multiple Observers. They let us compose our user interfaces with small, independent components that can each subscribe to one Observable emitting data. This means we can sync complex data across our interfaces with little difficulty.</p>
+				</section>
+				<section>
+					<img src="images/multi-component-interface-1.PNG" alt="Personal Boards on Trello">
+					<figcaption>
+						The Personal Boards list is shared and displayed in two different components.
+					</figcaption>
+				</section>
+				<section>
+					<img src="images/multi-component-interface-2.PNG" alt="New Personal Board on Trello">
+					<figcaption>
+						Creating a new board adds it to the list, and each component is synced.
+					</figcaption>
+				</section>
+				<section>
+					<h1>Why Observables and not Promises?</h1>
+					<img src="images/push-pull.PNG">
+					<p>Promises cannot be shared amongst several different components easily. Each async call will only return data to the caller. Sharing that data will require manually setting and updating a shareable reference variable.</p>
+					<p>Observables can be subscribed by many different callbacks, and each callback will receive the same data anytime it is emitted which they can manipulate with various operators.</p>
+				</section>
+				<section>
+					<h1>Different Types of Observables</h1>
+					<section>
+						<h3>Observables</h3>
+					</section>
+					<section>
+						<h3>Subscriptions</h3>
+					</section>
+					<section>
+						<h3>Subjects</h3>
+						<span class="fragment fade-in">Behaviour Subjects</span>
+						<span class="fragment fade-in">Replay Subjects</span>
+						<span class="fragment fade-in">Async Subjects</span>
+					</section>
+					<section>
+						<h3>Schedulers ??</h3>
+					</section>
+				</section>
+				<section>
+					<h2>Pipes</h2>
+				</section>
+				<section>
+					<h1>Combining Observables</h1>
+				</section>
+				<section>
+					<p>Sometimes we need to wait for multiple async calls to complete before we want to display information to a user.</p>
+					<p class="fragment fade-up">For instance, we may need know: the current user, the current page being viewed, and what roles the current user has for that page.</p>
+				</section>
+				<section>
+					<h1>Information</h1>
+					<ul>
+						<li>
+							<a href="https://rxjs-dev.firebaseapp.com">RxJS</a>
+						</li>
+						<li>
+							<a href="https://rxmarbles.com/">RxJS Marbles</a>
+							<p>Visual diagrams of RxJS operators.</p>
+						</li>
+						<li>
+							<a href="https://www.learnrxjs.io">Learn RxJS</a>
+						</li>
+						<li>
+							<a href="https://jsonplaceholder.typicode.com/">JSON Placeholder</a>
+						</li>
+					</ul>
+				</section>
+				<section>
+					<h3>Playground Time!</h3>
+					<a href="https://stackblitz.com/edit/rxjstechtalk">RxJS Tech Talk Playground</a>
+				</section>
+				<section>Section in section</section>
+				<section>Section in section</section>
+				<section>Section in section</section>
 				<section>
 					<h2>H2 Markdown test</h2>
 				</section>
@@ -76,72 +153,6 @@
 					<p class="fragment highlight-red">highlight-red</p>
 					<p class="fragment highlight-green">highlight-green</p>
 					<p class="fragment highlight-blue">highlight-blue</p>
-				</section>
-				<section>
-					<blockquote>RxJS is a library for composing asynchronous and event-based programs by using observable sequences. It provides one core type, the <a href="https://rxjs-dev.firebaseapp.com/guide/observable">Observable</a>, satellite types (Observer, Schedulers, Subjects) and operators inspired by <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/New_in_JavaScript/1.6">Array#extras</a> (map, filter, reduce, every, etc) to allow handling asynchronous events as collections.</blockquote>
-				</section>
-				<section>
-					<h1>What does that even mean?</h1>
-				</section>
-				<section>
-					<p>Basically, Observables are event emitters that can be subscribed to by multiple Observers. They let us compose our user interfaces with small, independent components that can each subscribe to one Observable emitting data.</p>
-				</section>
-				<section>
-					<img src="" alt="My Boards from Dashboard">
-					<figcaption>
-						One Observable emits the current user's boards, which both the main section and favourites menu subscribe to. Starring a board in the My Boards section sends a POST request to the back-end and then emits an event that updates the information for all boards.
-					</figcaption>
-				</section>
-				<section>
-					<h1>Different Types of Observables</h1>
-				</section>
-				<section>
-					<h3>Observables</h3>
-				</section>
-				<section>
-					<h3>Subscriptions</h3>
-				</section>
-				<section>
-					<h3>Subjects</h3>
-					<span class="fragment fade-in">Behaviour Subjects</span>
-					<span class="fragment fade-in">Replay Subjects</span>
-					<span class="fragment fade-in">Async Subjects</span>
-				</section>
-				<section>
-					<h3>Schedulers ??</h3>
-				</section>
-				<section>
-					<h1>Control Flow and Modify Data</h1>
-					<h2>Pipes</h2>
-				</section>
-				<section>
-					<h1>Combining Observables</h1>
-				</section>
-				<section>
-					<p>Sometimes we need to wait for multiple async calls to complete before we want to display information to a user.</p>
-					<p class="fragment fade-up">For instance, we may need know: the current user, the current page being viewed, and what roles the current user has for that page.</p>
-				</section>
-				<section>
-					<h1>Information</h1>
-					<ul>
-						<li>
-							<a href="https://rxjs-dev.firebaseapp.com">RxJS</a>
-						</li>
-						<li>
-							<a href="https://rxmarbles.com/">RxJS Marbles</a>
-							<p>Visual diagrams of RxJS operators.</p>
-						</li>
-						<li>
-							<a href="https://www.learnrxjs.io">Learn RxJS</a>
-						</li>
-						<li>
-							<a href="https://jsonplaceholder.typicode.com/">JSON Placeholder</a>
-						</li>
-					</ul>
-				</section>
-				<section>
-					<h3>Playground Time!</h3>
-					<a href="https://stackblitz.com/edit/rxjstechtalk">RxJS Tech Talk Playground</a>
 				</section>
 			</div>
 		</div>
