@@ -59,7 +59,13 @@
 				<section>
 					<p>Promises cannot be shared amongst several different components easily. Each async call will only return data to the caller. Sharing that data will require manually setting and updating a shareable reference variable.</p>
 					<img src="images/push-pull.PNG">
-					<p>Observables can be subscribed by many different callbacks, and each callback will receive the same data anytime it is emitted which they can manipulate with various operators.</p>
+				</section>
+				<section>
+					<p>Observables can be subscribed by many different callbacks, and each callback will receive an emitted event stream of data which they can manipulate with various operators.</p>
+					<img src="images/stream.png">
+				</section>
+				<section>
+					<img src="images/observable-operator-diagrams.png">
 				</section>
 				<section>
 					<h1>Different Types of Observables</h1>
