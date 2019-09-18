@@ -26,7 +26,6 @@
 			<div class="slides">
 				<section>
 					<h1>RxJS</h1>
-					<h2>Tech Talk</h2>
 				</section>
 				<section>
 					<h1>What Is RxJS?</h1>
@@ -39,7 +38,8 @@
 					<h1>...what does that even mean?</h1>
 				</section>
 				<section>
-					<p>Basically, Observables are event emitters that can be subscribed to by more than one component. They let us compose our user interfaces with small, independent components that can each subscribe to one Observable emitting data. This means we can sync complex data across our interfaces with little difficulty.</p>
+					<p>Basically, Observables let multiple components share data, without becoming out-of-sync. Instead of asking the observable to give us more information everytime we need it, we subscribe to an observable by telling it what we want to do when there is more information.</p>
+					<img src="images/push-pull.PNG">
 				</section>
 				<section>
 					<img src="images/multi-component-interface-1.PNG" alt="Personal Boards on Trello">
@@ -54,18 +54,12 @@
 					</figcaption>
 				</section>
 				<section>
-					<h1>Why Observables and not Promises?</h1>
-				</section>
-				<section>
+					<h2>Why Observables and not Promises?</h2>
 					<p>Promises cannot be shared amongst several different components easily. Each async call will only return data to the caller. Sharing that data will require manually setting and updating a shareable reference variable.</p>
-					<img src="images/push-pull.PNG">
 				</section>
 				<section>
 					<p>Observables can be subscribed by many different callbacks, and each callback will receive an emitted event stream of data which they can manipulate with various operators.</p>
 					<img src="images/stream.png">
-				</section>
-				<section>
-					<img src="images/observable-operator-diagrams.png">
 				</section>
 				<section>
 					<h1>Different Types of Observables</h1>
@@ -73,53 +67,43 @@
 				<section>
 					<section>
 						<h3>Observables</h3>
-						<p>Basic type of Observable. Subscribers will receive data only when it is emitted.</p>
+						<p>Basic type of Observable. Must use <code>.subscribe()</code> to pass a function to run when data is received.</p>
 						<pre>
-							<code data-trim contenteditable="true">
-								import { Observable } from 'rxjs';
-								
-								const foo = new Observable(subscriber => {
-									subscriber.next(42);
-								});
-								
-								foo.subscribe(x => {
-									console.log('subscriber 1: ', x);
-								});
-								foo.subscribe(y => {
-									console.log('subscriber 2: ', x);
-								});
-
-								// output
-								// subscriber 1: 42
-								// subscriber 2: 42 
-							</code>
-						</pre>
-					</section>
-					<section>
-						<h3>Subscriptions</h3>
-						<p>Returned from subscribing to an Observable. Used to unsubscribe from an Observable when it is no longer needed. An observable will not be active until it has <em>at least one subscriber</em>.</p>
-						<pre>
-							<code data-trim contenteditable="true">
-								// boards.component.ts
-								ngOnInit() {
-									this.boardsSubscription = this._boardsService.getBoards()
-										.subscribe(boards => this.boards = boards);
-								}
-								// ... later on
-								ngOnDestroy() {
-									this.boardsSubscription.unsubscribe();
-								}
+						<code data-trim contenteditable="true">
+							...	
+							ngOnInit() {
+								this._fakeApi.getUsers()
+									.subscribe(data => this.users = users);
+							}
+							...
 							</code>
 						</pre>
 					</section>
 					<section>
 						<h3>Subjects</h3>
-						<p>A more complex form of Observables. Not only can it be subscribed to, but you can use them to emit data as well.</p>
+						<p>A more complex form of Observable. Not only can it be subscribed to, but you can use them to emit data as well.</p>
+						<pre>
+							<code data-trim>
+								import { Subject } from 'rxjs';
+
+								const sub = new Subject();
+								
+								sub.next(1);
+								sub.subscribe(console.log);
+								sub.next(2); // OUTPUT => 2
+								sub.subscribe(console.log);
+								sub.next(3); // OUTPUT => 3,3 (logged from both subscribers)
+							</code>
+						</pre>
+					</section>
+					<section>
+						<h2>Types of Subjects</h2>
 						<ul>
-								<li class="fragment fade-in">Behaviour Subjects - Always emits current value</li>
-								<li class="fragment fade-in">Replay Subjects - Emits up to <em>nth</em> values</li>
-								<li class="fragment fade-in">Async Subjects - Emits only the last value when it completes</li>
-							</ul>
+							<li class="fragment fade-in">Subjects - No intial value or replay behavior.</li>
+							<li class="fragment fade-in">Behaviour Subjects - Requires an initial value and emits its current value (last emitted item) to new subscribers.</li>
+							<li class="fragment fade-in">Replay Subjects - Emits specified number of last emitted values (a replay) to new subscribers.</li>
+							<li class="fragment fade-in">Async Subjects - Emits only the last value when it completes.</li>
+						</ul>
 					</section>
 					<section>
 						<h3>Behaviour Subject</h3>
@@ -217,6 +201,23 @@
 					</section>
 				</section>
 				<section>
+					<h3>Subscriptions</h3>
+					<p>Returned from subscribing to an Observable. Used to unsubscribe from an Observable when it is no longer needed. An observable will not be active until it has <em>at least one subscriber</em>.</p>
+					<pre>
+						<code data-trim contenteditable="true">
+							// boards.component.ts
+							ngOnInit() {
+								this.boardsSubscription = this._boardsService.getBoards()
+									.subscribe(boards => this.boards = boards);
+							}
+							// ... later on
+							ngOnDestroy() {
+								this.boardsSubscription.unsubscribe();
+							}
+						</code>
+					</pre>
+				</section>
+				<section>
 					<h1>Creating Observables</h1>
 				</section>
 				<section>
@@ -283,144 +284,40 @@
 					<p>Operators can be 'piped' to mutate data going through an Observable before subscribing. For example, we can make sure to delay 500ms on every data event, only emit when there is a different value, or even change the data before it is sent to the subscribers.</p>
 				</section>
 				<section>
+					<img src="images/observable-operator-diagrams.png">
+				</section>
+				<section>
 					<section>
-						<h5>debounceTime</h5>
-						<pre><code>debounceTime(dueTime: number, scheduler: Scheduler): Observable</code></pre>
+						<h5>tap</h5>
+						<pre><code>tap(nextOrObserver: function, error: function, complete: function): Observable</code></pre>
 						<img src="images/debounceTime.PNG">
-						<p>Discard emitted values that take less than the specified time between output</p>
+						<p>Transparently perform actions or side-effects, such as logging.</p>
 						
 					</section>
 					<section>
 						<pre>
 							<code data-trim contenteditable="true">
-								// RxJS v6+
-								import { fromEvent, timer } from 'rxjs';
-								import { debounceTime, map } from 'rxjs/operators';
+								import { of } from 'rxjs';
+								import { tap, map } from 'rxjs/operators';
 								
-								const input = document.getElementById('example');
+								const source = of(1, 2, 3, 4, 5);
+								// transparently log values from source with 'tap'
+								const example = source.pipe(
+									tap(val => console.log(`BEFORE MAP: ${val}`)),
+									map(val => val + 10),
+									tap(val => console.log(`AFTER MAP: ${val}`))
+								);
 								
-								//for every keyup, map to current input value
-								const example = fromEvent(input, 'keyup').pipe(map(i => i.currentTarget.value));
-								
-								//wait .5s between keyups to emit current value
-								//throw away all other values
-								const debouncedInput = example.pipe(debounceTime(500));
-								
-								//log values
-								const subscribe = debouncedInput.subscribe(val => {
-									console.log(`Debounced Input: ${val}`);
-								});
-							</code>
-						</pre>
-					</section>
-					<section>
-						<h5>distinctUntilChanged</h5>
-						<pre><code>distinctUntilChanged(compare: function): Observable</code></pre>
-						<p>Only emit when the current value is different than the last.</p>
-						<pre>
-							<code data-trim contenteditable="true">
-								// RxJS v6+
-								import { from } from 'rxjs';
-								import { distinctUntilChanged } from 'rxjs/operators';
-								
-								//only output distinct values, based on the last emitted value
-								const myArrayWithDuplicatesInARow = from([1, 1, 2, 2, 3, 1, 2, 3]);
-								
-								const distinctSub = myArrayWithDuplicatesInARow
-									.pipe(distinctUntilChanged())
-									//output: 1,2,3,1,2,3
-									.subscribe(val => console.log('DISTINCT SUB:', val));
-								
-								const nonDistinctSub = myArrayWithDuplicatesInARow
-									//output: 1,1,2,2,3,1,2,3
-									.subscribe(val => console.log('NON DISTINCT SUB:', val));
-							</code>
-						</pre>
-					</section>
-					<section>
-						<h5>filter</h5>
-						<pre><code>filter(select: Function, thisArg: any): Observable</code></pre>
-						<p>Emit values that pass the provided condition.</p>
-						<pre>
-							<code data-trim contenteditable="true">
-								// RxJS v6+
-								import { from } from 'rxjs';
-								import { filter } from 'rxjs/operators';
-								
-								//emit ({name: 'Joe', age: 31}, {name: 'Bob', age:25})
-								const source = from([{ name: 'Joe', age: 31 }, { name: 'Bob', age: 25 }]);
-								//filter out people with age under 30
-								const example = source.pipe(filter(person => person.age >= 30));
-								//output: "Over 30: Joe"
-								const subscribe = example.subscribe(val => console.log(`Over 30: ${val.name}`));
-							</code>
-						</pre>
-					</section>
-					<section>
-						<h5>map</h5>
-						<pre><code>map(project: Function, thisArg: any): Observable</code></pre>
-						<p>Apply projection with each value from source.</p>
-						<pre>
-							<code data-trim contenteditable="true">
-								// RxJS v6+
-								import { from } from 'rxjs';
-								import { map } from 'rxjs/operators';
-								
-								//emit (1,2,3,4,5)
-								const source = from([1, 2, 3, 4, 5]);
-								//add 10 to each value
-								const example = source.pipe(map(val => val + 10));
-								//output: 11,12,13,14,15
+								//'tap' does not transform values
+								//output: 11...12...13...14...15
 								const subscribe = example.subscribe(val => console.log(val));
-							</code>
-						</pre>
-					</section>
-					<section>
-						<h5>pluck</h5>
-						<pre><code>pluck(properties: ...args): Observable</code></pre>
-						<p>Select properties to emit.</p>
-						<pre>
-							<code data-trim contenteditable="true">
-							// RxJS v6+
-							import { from } from 'rxjs';
-							import { pluck } from 'rxjs/operators';
-							
-							const source = from([{ name: 'Joe', age: 30 }, { name: 'Sarah', age: 35 }]);
-							//grab names
-							const example = source.pipe(pluck('name'));
-							//output: "Joe", "Sarah"
-							const subscribe = example.subscribe(val => console.log(val));
-							</code>
-						</pre>
-					</section>
-					<section>
-						<h5>tap</h5>
-						<pre><code>tap(nextOrObserver: function, error: function, complete: function): Observable</code></pre>
-						<p>Transparently perform actions or side-effects, such as logging.</p>
-						<pre>
-							<code data-trim contenteditable="true">
-									// RxJS v6+
-									import { of } from 'rxjs';
-									import { tap, map } from 'rxjs/operators';
-									
-									const source = of(1, 2, 3, 4, 5);
-									//transparently log values from source with 'do'
-									const example = source.pipe(
-									  tap(val => console.log(`BEFORE MAP: ${val}`)),
-									  map(val => val + 10),
-									  tap(val => console.log(`AFTER MAP: ${val}`))
-									);
-									
-									//'do' does not transform values
-									//output: 11...12...13...14...15
-									const subscribe = example.subscribe(val => console.log(val));
 							</code>
 						</pre>
 					</section>
 					<section>
 						<h5>finalize</h5>
 						<pre><code>finalize(callback: () => void)</code></pre>
-						<p>Call a function when observable completes or errors</p>
+						<p>Call a function when observable completes or errors.</p>
 						<pre>
 							<code data-trim contenteditable="true">
 								import { interval } from 'rxjs';
@@ -455,11 +352,91 @@
 							</code>
 						</pre>
 					</section>
+					<section>
+						<h5>map</h5>
+						<pre><code>map(project: Function, thisArg: any): Observable</code></pre>
+						<p>Apply projection with each value from source.</p>
+						<pre>
+							<code data-trim contenteditable="true">
+								// RxJS v6+
+								import { from } from 'rxjs';
+								import { map } from 'rxjs/operators';
+								
+								//emit (1,2,3,4,5)
+								const source = from([1, 2, 3, 4, 5]);
+								//add 10 to each value
+								const example = source.pipe(map(val => val + 10));
+								//output: 11,12,13,14,15
+								const subscribe = example.subscribe(val => console.log(val));
+							</code>
+						</pre>
+					</section>
+					<section>
+						<h5>distinctUntilChanged</h5>
+						<pre><code>distinctUntilChanged(compare: function): Observable</code></pre>
+						<p>Only emit when the current value is different than the last.</p>
+						<pre>
+							<code data-trim contenteditable="true">
+								import { from } from 'rxjs';
+								import { distinctUntilChanged } from 'rxjs/operators';
+								
+								// only output distinct values, based on the last emitted value
+								const source$ = from([1, 1, 2, 2, 3, 3]);
+								
+								source$
+									.pipe(distinctUntilChanged())
+									// output: 1,2,3
+									.subscribe(console.log);
+							</code>
+						</pre>
+					</section>
+					<section>
+						<h5>filter</h5>
+						<pre><code>filter(select: Function, thisArg: any): Observable</code></pre>
+						<p>Emit values that pass the provided condition.</p>
+						<pre>
+							<code data-trim contenteditable="true">
+								// RxJS v6+
+								import { from } from 'rxjs';
+								import { filter } from 'rxjs/operators';
+								
+								//emit ({name: 'Joe', age: 31}, {name: 'Bob', age:25})
+								const source = from([{ name: 'Joe', age: 31 }, { name: 'Bob', age: 25 }]);
+								//filter out people with age under 30
+								const example = source.pipe(filter(person => person.age >= 30));
+								//output: "Over 30: Joe"
+								const subscribe = example.subscribe(val => console.log(`Over 30: ${val.name}`));
+							</code>
+						</pre>
+					</section>
+					<section>
+						<h5>pluck</h5>
+						<pre><code>pluck(properties: ...args): Observable</code></pre>
+						<p>Select properties to emit.</p>
+						<pre>
+							<code data-trim contenteditable="true">
+							// RxJS v6+
+							import { from } from 'rxjs';
+							import { pluck } from 'rxjs/operators';
+							
+							const source = from([{ name: 'Joe', age: 30 }, { name: 'Sarah', age: 35 }]);
+							//grab names
+							const example = source.pipe(pluck('name'));
+							//output: "Joe", "Sarah"
+							const subscribe = example.subscribe(val => console.log(val));
+							</code>
+						</pre>
+					</section>
+					<section>
+						<h5>shareReplay</h5>
+						<pre><code>shareReplay(bufferSize?: number, windowTime?: number, scheduler?I IScheduler): Observable</code></pre>
+						<p>Share source and replay specified number of emissions on subscription.</p>
+					</section>
 				</section>
 				<section>
 					<h5>Combining Observables</h5>
 					<p>Sometimes we need to wait for multiple async calls to complete before we want to display information to a user.</p>
-					<p class="fragment fade-up">For instance, we may need know: the current user, the current page being viewed, and what roles the current user has for that page.</p>
+					<p class="fragment fade-up">For instance, we may need know: the current user, the current page being viewed, and what roles the current user has to show certain parts of the UI.</p>
 				</section>
 				<section>
 					<section>
@@ -525,6 +502,18 @@
 								const subscribe = example.subscribe(val => console.log(val));
 							</code>
 						</pre>
+					</section>
+					<section>
+						<h5>And many more...</h5>
+						<ul>
+							<li>combineAll</li>
+							<li>concat</li>
+							<li>concatAll</li>
+							<li>endWith</li>
+							<li>forkJoin</li>
+							<li>zip</li>
+							<li>...</li>
+						</ul>
 					</section>
 				</section>
 				<section>
